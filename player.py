@@ -20,6 +20,11 @@ class Player:
         if self.check_health_recovery_delay() and self.health < PLAYER_MAX_HEALTH:
             self.health += 1
 
+    def check_med_kit(self):
+        if self.x == 5.5 and self.y == 4.75: #and self.med_kid_active = True
+            self.health += 10
+            #self.med_kid_active = False
+
     def check_health_recovery_delay(self):
         time_now = pg.time.get_ticks()
         if time_now - self.time_prev > self.health_recovery_delay:
@@ -40,11 +45,17 @@ class Player:
         self.check_game_over()
 
     def single_fire_event(self, event):
-        if event.type == pg.MOUSEBUTTONDOWN:
+        if event.type == pg.MOUSEBUTTONDOWN and self.game.weapon.ammo > 0:
             if event.button == 1 and not self.shot and not self.game.weapon.reloading:
                 self.game.sound.shotgun.play()
                 self.shot = True
                 self.game.weapon.reloading = True
+                self.game.weapon.ammo -= 1
+    
+    def ammo_reload(self):
+        keys = pg.key.get_pressed()
+        if keys[pg.K_r]:
+            self.game.weapon.ammo = 2
 
     def movement(self):
         sin_a = math.sin(self.angle)
@@ -72,6 +83,7 @@ class Player:
             num_key_pressed += 1
             dx += -speed_sin
             dy += speed_cos
+
 
         # diag move correction
         if num_key_pressed:
@@ -114,6 +126,7 @@ class Player:
         self.movement()
         self.mouse_control()
         self.recover_health()
+        self.ammo_reload()
 
     @property
     def pos(self):

@@ -71,16 +71,20 @@ class NPC(AnimatedSprite):
     def check_hit_in_npc(self):
         if self.ray_cast_value and self.game.player.shot:
             if HALF_WIDTH - self.sprite_half_width < self.screen_x < HALF_WIDTH + self.sprite_half_width:
-                self.game.sound.npc_pain.play()
                 self.game.player.shot = False
                 self.pain = True
                 self.health -= self.game.weapon.damage
-                self.check_health()
+                if self.check_health():
+                   self.game.sound.npc_pain.play()
 
     def check_health(self):
         if self.health < 1:
             self.alive = False
             self.game.sound.npc_death.play()
+            return False
+        
+        else:
+            return True
 
     def run_logic(self):
         if self.alive:
@@ -208,6 +212,26 @@ class CyberDemonNPC(NPC):
         self.attack_damage = 15
         self.speed = 0.055
         self.accuracy = 0.25
+
+class CiganNPC(NPC):
+    def __init__(self, game, path='resources/sprites/npc/cigan/0.png', pos=(10.5, 5.5),
+                 scale=0.6, shift=0.38, animation_time=250):
+        super().__init__(game, path, pos, scale, shift, animation_time)
+        self.attack_dist = 1.0
+        self.health = 150
+        self.attack_damage = 25
+        self.speed = 0.05
+        self.accuracy = 0.35
+
+class Cigan2NPC(NPC):
+    def __init__(self, game, path='resources/sprites/npc/cigan_2/0.png', pos=(10.5, 5.5),
+                 scale=0.6, shift=0.38, animation_time=180):
+        super().__init__(game, path, pos, scale, shift, animation_time)
+        self.attack_dist = 1.0
+        self.health = 150
+        self.attack_damage = 25
+        self.speed = 0.05
+        self.accuracy = 0.35
 
 
 
